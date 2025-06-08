@@ -1,0 +1,50 @@
+#include <LPC213x.h>
+
+void clockwise();
+void anticlockwise();
+unsigned int col1;
+unsigned int i, j, k;
+
+int main()
+{
+    PINSEL0 = 0x00000000;
+    IODIR0  = 0x000000FF;
+    IOCLR0  = 0x000000FF;
+
+    while(1)
+    {
+        for(i=0; i<3; i++)
+            clockwise();
+
+        for(k=0; k<65000; k++);
+
+        for(i=0; i<3; i++)
+            anticlockwise();
+
+        for(k=0; k<65000; k++);
+    }
+
+    return 0;
+}
+
+void clockwise()
+{
+    col1 = 0x00000080;
+    for(i=0; i<4; i++)
+    {
+        IOCLR0 = 0x000000FF;
+        IOSET0 = (col1 >> i);
+        for(k=0; k<12000; k++);
+    }
+}
+
+void anticlockwise()
+{
+    col1 = 0x00000001;
+    for(i=0; i<4; i++)
+    {
+        IOCLR0 = 0x000000FF;
+        IOSET0 = (col1 << i);
+        for(k=0; k<12000; k++);
+    }
+}
