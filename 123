@@ -1,0 +1,30 @@
+#include <LPC213x.h>
+#define LED 0x80000000
+unsigned int val;
+unsigned int adc();
+int main(void)
+{
+    PINSEL0 = 0x00000300;
+    IODIR1  = 0x80000000;
+    VPBDIV  = 0x02;
+    while(1){
+        val = adc();
+        if (val > 800){
+            IO1SET = LED;
+        }else{
+            IO1CLR = LED;
+        }
+    }
+}
+
+unsigned int adc()
+{
+    unsigned int val;
+    
+    AD0CR = 0x00200600 | (1 << 6);
+    AD0CR |= (1 << 24);
+    while ((AD0GDR & (1U << 31)) == 0);
+    val = AD0GDR;
+    val = (val >> 6) & 0x03FF;
+    return val;
+}
